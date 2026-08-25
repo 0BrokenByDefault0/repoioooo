@@ -1,0 +1,27 @@
+name: Build unsigned IPA
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Build unsigned IPA
+        run: ./Scripts/build_ipa.sh
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: DAWLearn-unsigned-ipa
+          path: build/DAWLearn-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
