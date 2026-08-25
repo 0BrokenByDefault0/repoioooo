@@ -55,9 +55,14 @@ enum Library {
             }
             for element in map.elements where element.isTappable {
                 guard let detail = element.detail else { continue }
-                let hay = [element.label, detail.title, detail.summary]
-                    + detail.bullets + detail.actions + [detail.gotcha ?? ""]
-                    + detail.shortcuts.map { "\($0.keys) \($0.what)" }
+                var hay: [String] = [element.label, detail.title, detail.summary]
+                hay.append(contentsOf: detail.bullets)
+                hay.append(contentsOf: detail.actions)
+                hay.append(detail.gotcha ?? "")
+                for shortcut in detail.shortcuts {
+                    hay.append(shortcut.keys)
+                    hay.append(shortcut.what)
+                }
                 if matches(hay) {
                     hits.append(.element(map, element))
                 }
@@ -65,14 +70,22 @@ enum Library {
         }
 
         for wt in walkthroughs where daw == nil || wt.daw == daw {
-            let hay = [wt.title, wt.goal] + wt.steps.map { $0.instruction + " " + ($0.detail ?? "") } + wt.tips
+            var hay: [String] = [wt.title, wt.goal]
+            for step in wt.steps {
+                hay.append(step.instruction)
+                hay.append(step.detail ?? "")
+            }
+            hay.append(contentsOf: wt.tips)
             if matches(hay) { hits.append(.walkthrough(wt)) }
         }
 
         for topic in topics where daw == nil || topic.daw == daw || topic.daw == nil {
-            let hay = [topic.title, topic.blurb]
-                + topic.sections.map { $0.heading + " " + $0.body }
-                + topic.sections.flatMap(\.bullets)
+            var hay: [String] = [topic.title, topic.blurb]
+            for section in topic.sections {
+                hay.append(section.heading)
+                hay.append(section.body)
+                hay.append(contentsOf: section.bullets)
+            }
             if matches(hay) { hits.append(.topic(topic)) }
         }
 
