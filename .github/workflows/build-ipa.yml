@@ -7,10 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    # XcodeGen 2.45 emits objectVersion 77, which needs Xcode 16 or newer.
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
