@@ -5,6 +5,10 @@ options:
     iOS: "16.0"
   createIntermediateGroups: true
   developmentLanguage: en
+  # Recent XcodeGen defaults to objectVersion 77, which older Xcodes (including
+  # the one on the macos-14 CI runner) refuse to open. 56 is Xcode 14+ format.
+  objectVersion: 56
+  xcodeVersion: "14.0"
 
 settings:
   base:
